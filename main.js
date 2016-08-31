@@ -10,13 +10,20 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: false, // fixes jquery being undefined
+      webSecurity: false // this ideally shouldn't be done - YOLO!
+    },
+    width: 800,
+    height: 600
+  })
 
   // and load the index.html of the app.
-  mainWindow.loadURL(`file://${__dirname}/index.html`)
+  mainWindow.loadURL('https://slides.com/joshgillies/wd42-august-2016-electron-talk/live')
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -47,6 +54,11 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+// Fix iframed content for presentation, normally you'd never have to do this...
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  callback(true) // This should never be done!
 })
 
 // In this file you can include the rest of your app's specific main process
